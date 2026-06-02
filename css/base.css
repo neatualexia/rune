@@ -1,0 +1,104 @@
+/* ─────────────────────────────────────────────
+   base.css
+   Global reset, CSS variables, typography, nav.
+   If you want to retheme the whole app, start here.
+───────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  /* Brand colours */
+  --rose:       #C4687A;
+  --rose-light: #F2D6DB;
+  --rose-mid:   #E8A8B4;
+  --rose-dark:  #8B3D4E;
+
+  /* Neutral backgrounds */
+  --cream: #FAF7F4;
+  --warm:  #F0EAE4;
+
+  /* Text */
+  --text:      #2C1810;
+  --text-mid:  #6B4C42;
+  --text-soft: #A08070;
+
+  /* Accent colours */
+  --green:  #5C8A6E;
+  --amber:  #C49A3C;
+  --purple: #7B6BAE;
+
+  /* Layout */
+  --radius:    16px;
+  --radius-sm: 10px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  max-width: 420px;
+  margin: 0 auto;
+  padding-bottom: 80px; /* space for fixed nav */
+}
+
+h1, h2, h3 {
+  font-family: 'DM Serif Display', serif;
+}
+
+/* ── Bottom navigation ── */
+nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-top: 1px solid #EDE0D9;
+  display: flex;
+  z-index: 100;
+  padding: 8px 0 12px;
+}
+
+nav button {
+  flex: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-soft);
+  padding: 4px 0;
+}
+
+nav button.active {
+  color: var(--rose);
+}
+
+nav button svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+
+/* ── Page container ── */
+.page {
+  display: none;
+  padding: 20px 16px;
+  min-height: 100vh;
+}
+
+.page.active {
+  display: block;
+}
