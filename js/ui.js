@@ -344,16 +344,6 @@ function renderInsights() {
         ? `Your most frequent: ${topSymptoms.join(', ')}.`
         : 'Log symptoms to see patterns here.'
     },
-    {
-      icon: '🔒', bg: '#EDE0D9',
-      title: 'Your data is private',
-      body: 'All data is stored only on this device. Nothing is sent anywhere.'
-    },
-    {
-      icon: '📱', bg: '#E8ECF4',
-      title: 'Add to home screen',
-      body: 'In Safari, tap Share → "Add to Home Screen" for a native app experience on iPhone.'
-    },
   ];
 
   el.innerHTML = cards.map(card => `
