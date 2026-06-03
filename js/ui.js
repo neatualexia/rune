@@ -10,68 +10,80 @@
 // Symptoms shown on the log page.
 // Add, remove, or reorder items here to customise.
 const SYMPTOMS = [
-  'Cramps', 'Headache', 'Bloating', 'Fatigue',
-  'Backache', 'Nausea', 'Breast tenderness',
-  'Spotting', 'Insomnia', 'Acne'
+  "Cramps",
+  "Headache",
+  "Bloating",
+  "Fatigue",
+  "Backache",
+  "Nausea",
+  "Breast tenderness",
+  "Spotting",
+  "Insomnia",
+  "Acne",
 ];
-
 
 // ── Navigation ────────────────────────────────
 
 function goPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  btn.classList.add('active');
+  document
+    .querySelectorAll(".page")
+    .forEach((p) => p.classList.remove("active"));
+  document
+    .querySelectorAll(".bottom-nav button")
+    .forEach((b) => b.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  btn.classList.add("active");
 
   // Render the page we just switched to
-  if (name === 'calendar') renderCalendar();
-  if (name === 'log')      loadLogForm(logDate);
-  if (name === 'insights') renderInsights();
+  if (name === "calendar") renderCalendar();
+  if (name === "log") loadLogForm(logDate);
+  if (name === "insights") renderInsights();
 }
-
 
 // ── Home page ─────────────────────────────────
 
 function updateHome() {
   const cycleLength = getAvgCycleLength();
-  const cycleDay    = getCycleDay();
-  const phase       = getPhaseName(cycleDay, cycleLength);
+  const cycleDay = getCycleDay();
+  const phase = getPhaseName(cycleDay, cycleLength);
 
   // Cycle day + phase name in the ring
-  document.getElementById('cycle-day').textContent  = cycleDay || '—';
-  document.getElementById('phase-name').textContent = phase;
+  document.getElementById("cycle-day").textContent = cycleDay || "—";
+  document.getElementById("phase-name").textContent = phase;
 
   // Stats row
-  document.getElementById('stat-length').textContent =
-    data.cycles.length >= 2 ? getAvgCycleLength() + 'd' : '—';
+  document.getElementById("stat-length").textContent =
+    data.cycles.length >= 2 ? getAvgCycleLength() + "d" : "—";
 
-  document.getElementById('stat-period').textContent =
-    data.cycles.filter(c => c.end).length ? getAvgPeriodLength() + 'd' : '—';
+  document.getElementById("stat-period").textContent = data.cycles.filter(
+    (c) => c.end,
+  ).length
+    ? getAvgPeriodLength() + "d"
+    : "—";
 
   const daysToNext = cycleDay ? cycleLength - cycleDay : null;
-  document.getElementById('stat-next').textContent =
-    (daysToNext !== null && daysToNext >= 0) ? daysToNext + 'd' : '—';
+  document.getElementById("stat-next").textContent =
+    daysToNext !== null && daysToNext >= 0 ? daysToNext + "d" : "—";
 
   // Animate the SVG ring to show cycle progress
   const progress = cycleDay ? Math.min(cycleDay / cycleLength, 1) : 0;
   const circumference = 2 * Math.PI * 68; // matches r="68" in the SVG
-  document.getElementById('ring-progress').style.strokeDashoffset =
+  document.getElementById("ring-progress").style.strokeDashoffset =
     circumference * (1 - progress);
 
   // Period toggle button
-  const btn = document.getElementById('period-toggle');
-  btn.textContent = isOnPeriod() ? 'End period' : 'Start period';
-  btn.className   = 'action-btn' + (isOnPeriod() ? ' active-period' : '');
+  const btn = document.getElementById("period-toggle");
+  btn.textContent = isOnPeriod() ? "End period" : "Start period";
+  btn.className = "action-btn" + (isOnPeriod() ? " active-period" : "");
 
   // Today's log summary
   const todayLog = data.logs[today()] || {};
-  const area = document.getElementById('home-log-area');
-  if (todayLog.flow && todayLog.flow !== 'none') {
+  const area = document.getElementById("home-log-area");
+  if (todayLog.flow && todayLog.flow !== "none") {
     area.innerHTML = `
       <p style="font-size:13px;color:var(--text-mid);margin-bottom:8px">
         Flow: <strong>${todayLog.flow}</strong>
-        ${todayLog.mood ? ' · Mood: ' + todayLog.mood : ''}
+        ${todayLog.mood ? " · Mood: " + todayLog.mood : ""}
       </p>`;
   } else {
     area.innerHTML =
@@ -95,20 +107,25 @@ function togglePeriod() {
 // Shortcut from the home page "Log today" button
 function gotoLog() {
   logDate = today();
-  document.getElementById('log-date-label').textContent = 'Today';
-  goPage('log', document.getElementById('nav-log'));
+  document.getElementById("log-date-label").textContent = "Today";
+  goPage("log", document.getElementById("nav-log"));
 }
-
 
 // ── Calendar page ─────────────────────────────
 
 let calMonth = new Date().getMonth();
-let calYear  = new Date().getFullYear();
+let calYear = new Date().getFullYear();
 
 function changeMonth(delta) {
   calMonth += delta;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  if (calMonth > 11) {
+    calMonth = 0;
+    calYear++;
+  }
+  if (calMonth < 0) {
+    calMonth = 11;
+    calYear--;
+  }
   renderCalendar();
 }
 
@@ -116,29 +133,32 @@ function renderCalendar() {
   const periodDays = getPeriodDays();
   const { fertile, ovulation, predicted } = getSpecialDays();
 
-  document.getElementById('cal-title').textContent =
-    new Date(calYear, calMonth, 1).toLocaleDateString('en', { month: 'long', year: 'numeric' });
+  document.getElementById("cal-title").textContent = new Date(
+    calYear,
+    calMonth,
+    1,
+  ).toLocaleDateString("en", { month: "long", year: "numeric" });
 
-  const grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
+  const grid = document.getElementById("cal-grid");
+  grid.innerHTML = "";
 
   // Day-of-week headers
-  ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(label => {
-    const el = document.createElement('div');
-    el.className = 'cal-day-header';
+  ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach((label) => {
+    const el = document.createElement("div");
+    el.className = "cal-day-header";
     el.textContent = label;
     grid.appendChild(el);
   });
 
   // Empty cells before the 1st of the month
-  const firstDow    = new Date(calYear, calMonth, 1).getDay();
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const todayKey    = today();
+  const todayKey = today();
 
   for (let i = 0; i < firstDow; i++) {
     const d = new Date(calYear, calMonth, 1 - firstDow + i);
-    const el = document.createElement('div');
-    el.className = 'cal-day other-month';
+    const el = document.createElement("div");
+    el.className = "cal-day other-month";
     el.textContent = d.getDate();
     grid.appendChild(el);
   }
@@ -146,32 +166,36 @@ function renderCalendar() {
   // Day cells
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(calYear, calMonth, d);
-    const key  = toKey(date);
-    const el   = document.createElement('div');
-    el.className = 'cal-day';
+    const key = toKey(date);
+    const el = document.createElement("div");
+    el.className = "cal-day";
     el.textContent = d;
 
-    if (key === todayKey) el.classList.add('today');
+    if (key === todayKey) el.classList.add("today");
 
     // Colour priority: period > predicted > ovulation > fertile
-    if (periodDays.has(key))     el.classList.add('period');
-    else if (predicted.has(key)) el.classList.add('period', 'predicted');
-    else if (ovulation.has(key)) el.classList.add('ovulation');
-    else if (fertile.has(key))   el.classList.add('fertile');
+    if (periodDays.has(key)) el.classList.add("period");
+    else if (predicted.has(key)) el.classList.add("period", "predicted");
+    else if (ovulation.has(key)) el.classList.add("ovulation");
+    else if (fertile.has(key)) el.classList.add("fertile");
 
     // Tap a calendar day to open the log for that date
     el.onclick = () => {
       logDate = key;
-      document.getElementById('log-date-label').textContent = key === todayKey
-        ? 'Today'
-        : date.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
-      goPage('log', document.getElementById('nav-log'));
+      document.getElementById("log-date-label").textContent =
+        key === todayKey
+          ? "Today"
+          : date.toLocaleDateString("en", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            });
+      goPage("log", document.getElementById("nav-log"));
     };
 
     grid.appendChild(el);
   }
 }
-
 
 // ── Log page ──────────────────────────────────
 
@@ -181,13 +205,13 @@ let logDate = today();
 
 // Build symptom chips from the SYMPTOMS array
 function buildSymptomChips() {
-  const container = document.getElementById('symptom-chips');
-  SYMPTOMS.forEach(name => {
-    const chip = document.createElement('div');
-    chip.className    = 'chip';
-    chip.textContent  = name;
-    chip.dataset.sym  = name;
-    chip.onclick = () => chip.classList.toggle('selected');
+  const container = document.getElementById("symptom-chips");
+  SYMPTOMS.forEach((name) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.textContent = name;
+    chip.dataset.sym = name;
+    chip.onclick = () => chip.classList.toggle("selected");
     container.appendChild(chip);
   });
 }
@@ -195,55 +219,166 @@ function buildSymptomChips() {
 // Populate the form with saved data for `key`, or clear it
 function loadLogForm(key) {
   const log = data.logs[key] || {};
-  document.querySelectorAll('.flow-btn').forEach(b =>
-    b.classList.toggle('selected', b.dataset.flow === (log.flow || 'none')));
-  document.querySelectorAll('.mood-btn').forEach(b =>
-    b.classList.toggle('selected', b.dataset.mood === log.mood));
-  document.querySelectorAll('.chip').forEach(c =>
-    c.classList.toggle('selected', (log.symptoms || []).includes(c.dataset.sym)));
-  document.getElementById('log-note').value = log.note || '';
+  document
+    .querySelectorAll(".flow-btn")
+    .forEach((b) =>
+      b.classList.toggle("selected", b.dataset.flow === (log.flow || "none")),
+    );
+  document
+    .querySelectorAll(".mood-btn")
+    .forEach((b) =>
+      b.classList.toggle("selected", b.dataset.mood === log.mood),
+    );
+  document
+    .querySelectorAll(".chip")
+    .forEach((c) =>
+      c.classList.toggle(
+        "selected",
+        (log.symptoms || []).includes(c.dataset.sym),
+      ),
+    );
+  document.getElementById("log-note").value = log.note || "";
+  renderPeriodControls(key);
+}
+
+// Work out what period-related action is available for a given date
+// and render the appropriate button
+function renderPeriodControls(key) {
+  const container = document.getElementById("period-log-controls");
+  const periodDays = getPeriodDays();
+  const isInPeriod = periodDays.has(key);
+
+  // Find if this date is the start or end of a logged cycle
+  const cycleIndex = data.cycles.findIndex((c) => c.start === key);
+  const cycleEndIndex = data.cycles.findIndex((c) => c.end === key);
+
+  if (cycleIndex !== -1) {
+    // This day is already a period start — offer to remove it
+    container.innerHTML = `
+      <p style="font-size:13px;color:var(--rose);margin-bottom:8px">✓ Period starts on this day</p>
+      <button class="action-btn secondary" onclick="removePeriodStart('${key}')">Remove period start</button>`;
+  } else if (cycleEndIndex !== -1) {
+    // This day is already a period end — offer to remove it
+    container.innerHTML = `
+      <p style="font-size:13px;color:var(--rose);margin-bottom:8px">✓ Period ends on this day</p>
+      <button class="action-btn secondary" onclick="removePeriodEnd('${key}')">Remove period end</button>`;
+  } else if (isInPeriod) {
+    // This day is mid-period — offer to mark it as the end
+    container.innerHTML = `
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:8px">This day is within a period.</p>
+      <button class="action-btn secondary" onclick="markPeriodEnd('${key}')">Mark as period end</button>`;
+  } else {
+    // Not in a period — offer to start one here
+    container.innerHTML = `
+      <button class="action-btn secondary" onclick="markPeriodStart('${key}')">Mark as period start</button>`;
+  }
+}
+
+function markPeriodStart(key) {
+  // Check for overlapping cycles
+  const periodDays = getPeriodDays();
+  if (periodDays.has(key)) {
+    alert("This day already falls within an existing period.");
+    return;
+  }
+  // Insert the new cycle in chronological order
+  data.cycles.push({ start: key, end: null });
+  data.cycles.sort((a, b) => (a.start > b.start ? 1 : -1));
+  saveData(data);
+  renderPeriodControls(key);
+  updateHome();
+  showToast("Period start saved ✓");
+}
+
+function markPeriodEnd(key) {
+  // Find the most recent cycle that started before this date and has no end
+  const cycle = [...data.cycles]
+    .reverse()
+    .find((c) => c.start <= key && !c.end);
+  if (!cycle) {
+    alert("No period start found before this date.");
+    return;
+  }
+  cycle.end = key;
+  saveData(data);
+  renderPeriodControls(key);
+  updateHome();
+  showToast("Period end saved ✓");
+}
+
+function removePeriodStart(key) {
+  const confirmed = confirm(
+    "Remove this period start? The whole cycle entry will be deleted.",
+  );
+  if (!confirmed) return;
+  data.cycles = data.cycles.filter((c) => c.start !== key);
+  saveData(data);
+  renderPeriodControls(key);
+  updateHome();
+  showToast("Removed ✓");
+}
+
+function removePeriodEnd(key) {
+  const confirmed = confirm(
+    "Remove this period end? The period will be marked as ongoing.",
+  );
+  if (!confirmed) return;
+  const cycle = data.cycles.find((c) => c.end === key);
+  if (cycle) cycle.end = null;
+  saveData(data);
+  renderPeriodControls(key);
+  updateHome();
+  showToast("Removed ✓");
 }
 
 function selectFlow(el) {
-  document.querySelectorAll('.flow-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+  document
+    .querySelectorAll(".flow-btn")
+    .forEach((b) => b.classList.remove("selected"));
+  el.classList.add("selected");
 }
 
 function selectMood(el) {
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+  document
+    .querySelectorAll(".mood-btn")
+    .forEach((b) => b.classList.remove("selected"));
+  el.classList.add("selected");
 }
 
 function saveLog() {
-  const flow     = document.querySelector('.flow-btn.selected')?.dataset.flow || 'none';
-  const mood     = document.querySelector('.mood-btn.selected')?.dataset.mood || '';
-  const symptoms = [...document.querySelectorAll('.chip.selected')].map(c => c.dataset.sym);
-  const note     = document.getElementById('log-note').value;
+  const flow =
+    document.querySelector(".flow-btn.selected")?.dataset.flow || "none";
+  const mood = document.querySelector(".mood-btn.selected")?.dataset.mood || "";
+  const symptoms = [...document.querySelectorAll(".chip.selected")].map(
+    (c) => c.dataset.sym,
+  );
+  const note = document.getElementById("log-note").value;
 
   // Auto-start a period if medium/heavy flow is logged and no period is active
-  if (['medium', 'heavy'].includes(flow) && !isOnPeriod()) {
+  if (["medium", "heavy"].includes(flow) && !isOnPeriod()) {
     data.cycles.push({ start: logDate, end: null });
   }
 
   data.logs[logDate] = { flow, mood, symptoms, note, date: logDate };
   saveData(data);
-  showToast('Saved ✓');
+  showToast("Saved ✓");
   updateHome();
 }
-
 
 // ── Insights page ─────────────────────────────
 
 function renderInsights() {
-  const el       = document.getElementById('insights-content');
-  const cycles   = data.cycles.length;
-  const logs     = Object.values(data.logs);
+  const el = document.getElementById("insights-content");
+  const cycles = data.cycles.length;
+  const logs = Object.values(data.logs);
 
   // Count how often each symptom appears across all logs
   const symptomCount = {};
-  logs.forEach(log =>
-    (log.symptoms || []).forEach(s =>
-      symptomCount[s] = (symptomCount[s] || 0) + 1));
+  logs.forEach((log) =>
+    (log.symptoms || []).forEach(
+      (s) => (symptomCount[s] = (symptomCount[s] || 0) + 1),
+    ),
+  );
   const topSymptoms = Object.entries(symptomCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
@@ -251,41 +386,48 @@ function renderInsights() {
 
   const cards = [
     {
-      icon: '🌙', bg: '#F2D6DB',
-      title: `${cycles} cycle${cycles !== 1 ? 's' : ''} tracked`,
+      icon: "🌙",
+      bg: "#F2D6DB",
+      title: `${cycles} cycle${cycles !== 1 ? "s" : ""} tracked`,
       body: cycles
         ? `Average length: ${getAvgCycleLength()} days. Period duration: ${getAvgPeriodLength()} days.`
-        : 'Log your first period to start tracking.'
+        : "Log your first period to start tracking.",
     },
     {
-      icon: '📊', bg: '#E8F4EC',
-      title: 'Common symptoms',
+      icon: "📊",
+      bg: "#E8F4EC",
+      title: "Common symptoms",
       body: topSymptoms.length
-        ? `Your most frequent: ${topSymptoms.join(', ')}.`
-        : 'Log symptoms to see patterns here.'
+        ? `Your most frequent: ${topSymptoms.join(", ")}.`
+        : "Log symptoms to see patterns here.",
     },
     {
-      icon: '🔒', bg: '#EDE0D9',
-      title: 'Your data is private',
-      body: 'All data is stored only on this device. Nothing is sent anywhere.'
+      icon: "🔒",
+      bg: "#EDE0D9",
+      title: "Your data is private",
+      body: "All data is stored only on this device. Nothing is sent anywhere.",
     },
     {
-      icon: '📱', bg: '#E8ECF4',
-      title: 'Add to home screen',
-      body: 'In Safari, tap Share → "Add to Home Screen" for a native app experience on iPhone.'
+      icon: "📱",
+      bg: "#E8ECF4",
+      title: "Add to home screen",
+      body: 'In Safari, tap Share → "Add to Home Screen" for a native app experience on iPhone.',
     },
   ];
 
-  el.innerHTML = cards.map(card => `
+  el.innerHTML = cards
+    .map(
+      (card) => `
     <div class="insight-card">
       <div class="insight-icon" style="background:${card.bg}">${card.icon}</div>
       <div class="insight-body">
         <h3>${card.title}</h3>
         <p>${card.body}</p>
       </div>
-    </div>`).join('');
+    </div>`,
+    )
+    .join("");
 }
-
 
 // ── Export / Import ───────────────────────────
 
@@ -293,39 +435,41 @@ function exportData() {
   // Build the export object — includes a timestamp so you know when it was made
   const exportObj = {
     exportedAt: new Date().toISOString(),
-    ...data
+    ...data,
   };
 
   // Turn it into a JSON string and wrap it in a downloadable blob
-  const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
 
   // Create a temporary link, click it to trigger the download, then clean up
-  const a       = document.createElement('a');
-  a.href        = url;
-  a.download    = `luna-backup-${today()}.json`;
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `luna-backup-${today()}.json`;
   a.click();
   URL.revokeObjectURL(url);
 
-  showToast('Exported ✓');
+  showToast("Exported ✓");
 }
 
 function importData() {
   // Warn the user before overwriting anything
   const confirmed = confirm(
-    'This will replace ALL your current data with the backup file.\n\n' +
-    'Any logs since your last export will be lost.\n\n' +
-    'Are you sure?'
+    "This will replace ALL your current data with the backup file.\n\n" +
+      "Any logs since your last export will be lost.\n\n" +
+      "Are you sure?",
   );
   if (!confirmed) return;
 
   // Open a file picker filtered to JSON files
-  const input    = document.createElement('input');
-  input.type     = 'file';
-  input.accept   = '.json';
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
 
   input.onchange = (e) => {
-    const file   = e.target.files[0];
+    const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
@@ -335,7 +479,7 @@ function importData() {
 
         // Basic validation — make sure it looks like a Luna backup
         if (!imported.cycles || !imported.logs || !imported.settings) {
-          alert('This doesn\'t look like a Luna backup file.');
+          alert("This doesn't look like a Luna backup file.");
           return;
         }
 
@@ -347,9 +491,9 @@ function importData() {
         // Re-render everything with the restored data
         updateHome();
         renderInsights();
-        showToast('Imported ✓');
+        showToast("Imported ✓");
       } catch (err) {
-        alert('Could not read the file. Make sure it\'s a valid Luna backup.');
+        alert("Could not read the file. Make sure it's a valid Luna backup.");
       }
     };
     reader.readAsText(file);
@@ -358,12 +502,11 @@ function importData() {
   input.click();
 }
 
-
 // ── Toast notification ────────────────────────
 
 function showToast(message) {
-  const toast = document.getElementById('toast');
+  const toast = document.getElementById("toast");
   toast.textContent = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2000);
 }

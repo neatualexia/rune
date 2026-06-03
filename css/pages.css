@@ -9,110 +9,110 @@
 ──────────────── */
 
 .home-header {
-  text-align: center;
-  padding: 28px 0 20px;
+    text-align: center;
+    padding: 28px 0 20px;
 }
 
 .home-header h1 {
-  font-size: 28px;
-  color: var(--rose-dark);
-  letter-spacing: -0.3px;
+    font-size: 28px;
+    color: var(--rose-dark);
+    letter-spacing: -0.3px;
 }
 
 /* The circular progress ring */
 .phase-ring {
-  width: 160px;
-  height: 160px;
-  margin: 20px auto;
-  position: relative;
-  cursor: pointer;
+    width: 160px;
+    height: 160px;
+    margin: 20px auto;
+    position: relative;
+    cursor: pointer;
 }
 
 .phase-ring svg {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .phase-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .phase-label .day-num {
-  font-family: 'DM Serif Display', serif;
-  font-size: 38px;
-  color: var(--rose-dark);
-  line-height: 1;
+    font-family: "DM Serif Display", serif;
+    font-size: 38px;
+    color: var(--rose-dark);
+    line-height: 1;
 }
 
 .phase-label .day-txt {
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 500;
-  margin-top: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+    font-size: 11px;
+    color: var(--text-soft);
+    font-weight: 500;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .phase-label .phase-name {
-  font-size: 13px;
-  color: var(--rose);
-  font-weight: 500;
-  margin-top: 6px;
+    font-size: 13px;
+    color: var(--rose);
+    font-weight: 500;
+    margin-top: 6px;
 }
 
 /* Stats row (avg cycle / period len / days to next) */
 .stat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 20px 0;
 }
 
 .stat-card {
-  background: white;
-  border-radius: var(--radius-sm);
-  padding: 12px 8px;
-  text-align: center;
-  border: 1px solid #EDE0D9;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    text-align: center;
+    border: 1px solid #ede0d9;
 }
 
 .stat-card .val {
-  font-family: 'DM Serif Display', serif;
-  font-size: 22px;
-  color: var(--text);
-  line-height: 1;
+    font-family: "DM Serif Display", serif;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1;
 }
 
 .stat-card .lbl {
-  font-size: 10px;
-  color: var(--text-soft);
-  margin-top: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
+    font-size: 10px;
+    color: var(--text-soft);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
 }
 
 /* Today's log summary card */
 .today-section {
-  background: white;
-  border-radius: var(--radius);
-  padding: 16px;
-  margin: 16px 0;
-  border: 1px solid #EDE0D9;
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 16px 0;
+    border: 1px solid #ede0d9;
 }
 
 .today-section h3 {
-  font-size: 13px;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
+    font-size: 13px;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
 }
 
 /* ────────────────
@@ -120,137 +120,148 @@
 ──────────────── */
 
 .cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0 8px;
 }
 
 .cal-nav h2 {
-  font-size: 20px;
-  color: var(--text);
+    font-size: 20px;
+    color: var(--text);
 }
 
-.cal-nav button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-mid);
+.cal-nav > button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-mid);
+    font-size: 14px;
+    padding: 0;
 }
 
-.cal-nav button:active {
-  background: var(--warm);
+.cal-nav > button svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-mid);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.cal-nav > button:active {
+    background: var(--warm);
 }
 
 /* 7-column grid for the calendar */
 .cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
 }
 
 .cal-day-header {
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-soft);
-  padding: 6px 0;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-soft);
+    padding: 6px 0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .cal-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 13px;
-  cursor: pointer;
-  position: relative;
-  transition: background 0.1s;
-  font-weight: 400;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.1s;
+    font-weight: 400;
 }
 
 .cal-day:active {
-  opacity: 0.7;
+    opacity: 0.7;
 }
 
 /* Today gets a dot underneath */
 .cal-day.today {
-  font-weight: 500;
-  color: var(--rose-dark);
+    font-weight: 500;
+    color: var(--rose-dark);
 }
 
 .cal-day.today::after {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: var(--rose);
-  border-radius: 50%;
+    content: "";
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--rose);
+    border-radius: 50%;
 }
 
 /* Day type colours */
 .cal-day.period {
-  background: var(--rose);
-  color: white;
-  font-weight: 500;
+    background: var(--rose);
+    color: white;
+    font-weight: 500;
 }
 
 .cal-day.period.predicted {
-  background: var(--rose-light);
-  color: var(--rose-dark);
+    background: var(--rose-light);
+    color: var(--rose-dark);
 }
 
 .cal-day.fertile {
-  background: #E8F4EC;
-  color: var(--green);
+    background: #e8f4ec;
+    color: var(--green);
 }
 
 .cal-day.ovulation {
-  background: var(--green);
-  color: white;
+    background: var(--green);
+    color: white;
 }
 
 .cal-day.other-month {
-  color: var(--text-soft);
-  opacity: 0.4;
+    color: var(--text-soft);
+    opacity: 0.4;
 }
 
 /* Legend below the calendar */
 .cal-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 16px 0;
-  padding: 12px;
-  background: white;
-  border-radius: var(--radius-sm);
-  border: 1px solid #EDE0D9;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+    padding: 12px;
+    background: white;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ede0d9;
 }
 
 .legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-mid);
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
 
 /* ────────────────
@@ -258,18 +269,18 @@
 ──────────────── */
 
 .log-header {
-  padding: 28px 0 16px;
+    padding: 28px 0 16px;
 }
 
 .log-header h1 {
-  font-size: 26px;
-  color: var(--rose-dark);
+    font-size: 26px;
+    color: var(--rose-dark);
 }
 
 .log-header p {
-  color: var(--text-soft);
-  font-size: 14px;
-  margin-top: 4px;
+    color: var(--text-soft);
+    font-size: 14px;
+    margin-top: 4px;
 }
 
 /* ────────────────
@@ -277,37 +288,37 @@
 ──────────────── */
 
 .insight-card {
-  background: white;
-  border-radius: var(--radius);
-  padding: 16px;
-  margin: 12px 0;
-  border: 1px solid #EDE0D9;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 12px 0;
+    border: 1px solid #ede0d9;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
 }
 
 .insight-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
 }
 
 .insight-body h3 {
-  font-size: 15px;
-  color: var(--text);
-  margin-bottom: 3px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 3px;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
 }
 
 .insight-body p {
-  font-size: 13px;
-  color: var(--text-soft);
-  line-height: 1.5;
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.5;
 }
