@@ -287,6 +287,78 @@ function renderInsights() {
 }
 
 
+// ── Export / Import ───────────────────────────
+
+function exportData() {
+  // Build the export object — includes a timestamp so you know when it was made
+  const exportObj = {
+    exportedAt: new Date().toISOString(),
+    ...data
+  };
+
+  // Turn it into a JSON string and wrap it in a downloadable blob
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+
+  // Create a temporary link, click it to trigger the download, then clean up
+  const a       = document.createElement('a');
+  a.href        = url;
+  a.download    = `luna-backup-${today()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  showToast('Exported ✓');
+}
+
+function importData() {
+  // Warn the user before overwriting anything
+  const confirmed = confirm(
+    'This will replace ALL your current data with the backup file.\n\n' +
+    'Any logs since your last export will be lost.\n\n' +
+    'Are you sure?'
+  );
+  if (!confirmed) return;
+
+  // Open a file picker filtered to JSON files
+  const input    = document.createElement('input');
+  input.type     = 'file';
+  input.accept   = '.json';
+
+  input.onchange = (e) => {
+    const file   = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+
+        // Basic validation — make sure it looks like a Luna backup
+        if (!imported.cycles || !imported.logs || !imported.settings) {
+          alert('This doesn\'t look like a Luna backup file.');
+          return;
+        }
+
+        // Strip the exportedAt timestamp before saving (it's not part of app data)
+        const { exportedAt, ...appData } = imported;
+        data = appData;
+        saveData(data);
+
+        // Re-render everything with the restored data
+        updateHome();
+        renderInsights();
+        showToast('Imported ✓');
+      } catch (err) {
+        alert('Could not read the file. Make sure it\'s a valid Luna backup.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  input.click();
+}
+
+
 // ── Toast notification ────────────────────────
 
 function showToast(message) {
