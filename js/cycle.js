@@ -171,7 +171,7 @@ function getSpecialDays() {
   const predicted = new Set();
 
   // Project 3 cycles forward
-  for (let cycle = 0; cycle < 3; cycle++) {
+  for (let cycle = 0; cycle < 13; cycle++) {
     const cycleStart = new Date(base);
     cycleStart.setDate(cycleStart.getDate() + cycleLength * cycle);
 
