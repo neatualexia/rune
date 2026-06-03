@@ -40,6 +40,8 @@ function updateHome() {
 
   document.getElementById('cycle-day').textContent  = cycleDay || '—';
   document.getElementById('phase-name').textContent = phase;
+  document.getElementById('home-date').textContent =
+    new Date().toLocaleDateString('en', { month: 'long', day: 'numeric' });
 
   const cycles = getCycles();
   document.getElementById('stat-length').textContent =
