@@ -564,7 +564,7 @@ function importData() {
         const imported = JSON.parse(e.target.result);
 
         // Basic validation — make sure it looks like a Luna backup
-        if (!imported.cycles || !imported.logs || !imported.settings) {
+        if (!imported.logs || !imported.settings) {
           alert('This doesn\'t look like a Luna backup file.');
           return;
         }
