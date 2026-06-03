@@ -139,6 +139,7 @@ function renderCalendar() {
 
     // Tap a calendar day to open the log for that date
     el.onclick = () => {
+      if (key > todayKey) return;
       logDate = key;
       document.getElementById('log-date-label').textContent = key === todayKey
         ? 'Today'
