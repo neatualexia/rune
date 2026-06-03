@@ -5,28 +5,32 @@
 //
 // Data shape:
 // {
-//   cycles: [{ start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' | null }],
-//   logs:   { 'YYYY-MM-DD': { flow, mood, symptoms, note } },
+//   logs:     { 'YYYY-MM-DD': { flow, mood, symptoms, note } },
 //   settings: { cycleLength: 28, periodLength: 5 }
 // }
+//
+// NOTE: cycles are no longer stored explicitly.
+// They are derived from flow logs in cycle.js.
 // ─────────────────────────────────────────────
 
 const STORAGE_KEY = 'luna_v1';
 
 function defaultData() {
   return {
-    cycles: [],
     logs: {},
     settings: {
-      cycleLength: 28,  // fallback used before enough cycles are logged
-      periodLength: 5   // fallback used before enough periods are logged
+      cycleLength: 28,  // fallback before enough cycles are logged
+      periodLength: 5   // fallback before enough periods are logged
     }
   };
 }
 
 function loadData() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData();
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData();
+    // Migration: if old data has a `cycles` array, drop it — cycles are now derived
+    if (stored.cycles) delete stored.cycles;
+    return stored;
   } catch (e) {
     console.error('Luna: failed to load data from localStorage', e);
     return defaultData();
@@ -41,6 +45,4 @@ function saveData(data) {
   }
 }
 
-// Expose a single global `data` object that the rest of the app reads and mutates.
-// After mutating it, call saveData(data) to persist the change.
-let data = loadData();
+var data = loadData();
