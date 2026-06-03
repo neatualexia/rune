@@ -331,7 +331,7 @@ function renderInsights() {
     {
       icon: '🌙', bg: '#F2D6DB',
       title: `${cycles.length} cycle${cycles.length !== 1 ? 's' : ''} tracked`,
-      body: cycles
+      body: cycles.length
         ? `Average length: ${getAvgCycleLength()} days. Period duration: ${getAvgPeriodLength()} days.`
         : 'Log your first period to start tracking.',
       onclick: 'goHistory()',
@@ -356,6 +356,164 @@ function renderInsights() {
       </div>
       ${card.tappable ? `<svg style="width:16px;height:16px;stroke:var(--text-soft);stroke-width:2;flex-shrink:0" viewBox="0 0 24 24" fill="none"><polyline points="9 18 15 12 9 6" stroke="currentColor"/></svg>` : ''}
     </div>`).join('');
+
+  // Render cycle length chart below the cards
+  el.innerHTML += renderCycleLengthChart(cycles);
+}
+
+function renderCycleLengthChart(cycles) {
+  // Need at least 2 cycles to calculate cycle lengths
+  if (cycles.length < 2) {
+    return `
+      <div class="chart-card">
+        <div class="chart-title">Cycle length</div>
+        <div class="chart-empty">Log at least 2 cycles to see your trend.</div>
+      </div>`;
+  }
+
+  // Calculate cycle lengths (start-to-start gaps)
+  const points = [];
+  for (let i = 1; i < cycles.length; i++) {
+    points.push({
+      label: cycles[i - 1].start,
+      days:  daysBetween(cycles[i - 1].start, cycles[i].start)
+    });
+  }
+
+  const avg    = Math.round(points.reduce((s, p) => s + p.days, 0) / points.length);
+  const stdDev = Math.round(Math.sqrt(
+    points.reduce((s, p) => s + Math.pow(p.days - avg, 2), 0) / points.length
+  ));
+
+  // "Normal" band is avg ± 7 days (clinical definition of normal variation)
+  const bandLow  = avg - 7;
+  const bandHigh = avg + 7;
+
+  // SVG dimensions
+  const W = 320, H = 160;
+  const padL = 28, padR = 16, padT = 24, padB = 24;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  // Y axis: range is min/max of data with some breathing room
+  const minVal = Math.max(0,  Math.min(...points.map(p => p.days)) - 5);
+  const maxVal = Math.max(35, Math.max(...points.map(p => p.days)) + 5);
+  const yRange = maxVal - minVal;
+
+  // Convert a day value → SVG y coordinate
+  const toY = v => padT + chartH - ((v - minVal) / yRange) * chartH;
+
+  // Convert a point index → SVG x coordinate
+  const toX = i => padL + (i / (points.length - 1)) * chartW;
+
+  // Build smooth polyline path using cubic bezier curves
+  const linePoints = points.map((p, i) => ({ x: toX(i), y: toY(p.days) }));
+  let pathD = `M ${linePoints[0].x} ${linePoints[0].y}`;
+  for (let i = 1; i < linePoints.length; i++) {
+    const prev = linePoints[i - 1];
+    const curr = linePoints[i];
+    const cpX  = (prev.x + curr.x) / 2;
+    pathD += ` C ${cpX} ${prev.y}, ${cpX} ${curr.y}, ${curr.x} ${curr.y}`;
+  }
+
+  // Normal band rect
+  const bandY1 = toY(bandHigh);
+  const bandY2 = toY(bandLow);
+
+  // Y axis gridlines at avg, bandLow, bandHigh
+  const gridLines = [bandLow, avg, bandHigh].map(v => ({
+    y: toY(v), label: v, isAvg: v === avg
+  }));
+
+  // Dots — flag abnormal ones (outside band)
+  const dots = points.map((p, i) => {
+    const abnormal = p.days < bandLow || p.days > bandHigh;
+    return { x: toX(i), y: toY(p.days), days: p.days, abnormal };
+  });
+
+  // Format month label from a date key
+  const monthLabel = key =>
+    fromKey(key).toLocaleDateString('en', { month: 'short' });
+
+  // Only show a label every few points to avoid crowding
+  const labelStep = Math.ceil(points.length / 5);
+
+  const svgContent = `
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;height:auto;display:block;overflow:visible">
+
+      <!-- Normal band -->
+      <rect x="${padL}" y="${bandY1}"
+            width="${chartW}" height="${bandY2 - bandY1}"
+            fill="#F0EAE4" rx="2"/>
+
+      <!-- Gridlines -->
+      ${gridLines.map(g => `
+        <line x1="${padL}" y1="${g.y}" x2="${padL + chartW}" y2="${g.y}"
+              stroke="${g.isAvg ? '#C4687A' : '#D8C8C0'}"
+              stroke-width="${g.isAvg ? 1 : 0.5}"
+              stroke-dasharray="${g.isAvg ? '3,3' : '2,2'}"/>
+        <text x="${padL - 4}" y="${g.y + 4}"
+              font-size="8" fill="#A08070" text-anchor="end">${g.label}</text>
+      `).join('')}
+
+      <!-- Smooth line -->
+      <path d="${pathD}" fill="none" stroke="#D8A0A8" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Dots -->
+      ${dots.map((d, i) => `
+        ${d.abnormal ? `
+          <circle cx="${d.x}" cy="${d.y}" r="10"
+                  fill="#F2D6DB" opacity="0.5"/>
+        ` : ''}
+        <circle cx="${d.x}" cy="${d.y}" r="${d.abnormal ? 5 : 3.5}"
+                fill="${d.abnormal ? '#C4687A' : '#8B3D4E'}"
+                stroke="white" stroke-width="1.5"/>
+        ${d.abnormal ? `
+          <text x="${d.x}" y="${d.y - 14}"
+                font-size="8" fill="#8B3D4E" text-anchor="middle"
+                font-weight="600" letter-spacing="0.5">IRREGULAR</text>
+        ` : ''}
+      `).join('')}
+
+      <!-- X axis month labels -->
+      ${points.map((p, i) => i % labelStep === 0 ? `
+        <text x="${toX(i)}" y="${H - 4}"
+              font-size="8" fill="#A08070" text-anchor="middle">
+          ${monthLabel(p.label)}
+        </text>
+      ` : '').join('')}
+    </svg>`;
+
+  // Stats below the chart
+  const statsRow = `
+    <div class="chart-stats">
+      <div class="chart-stat">
+        <span class="chart-stat-val">${avg}d</span>
+        <span class="chart-stat-lbl">Average</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-val">${Math.min(...points.map(p => p.days))}d</span>
+        <span class="chart-stat-lbl">Shortest</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-val">${Math.max(...points.map(p => p.days))}d</span>
+        <span class="chart-stat-lbl">Longest</span>
+      </div>
+      <div class="chart-stat">
+        <span class="chart-stat-val">±${stdDev}d</span>
+        <span class="chart-stat-lbl">Variation</span>
+      </div>
+    </div>`;
+
+  return `
+    <div class="chart-card">
+      <div class="chart-title">Cycle length</div>
+      <div class="chart-subtitle">Shaded band = typical range (±7 days from your average)</div>
+      ${svgContent}
+      ${statsRow}
+    </div>`;
 }
 
 
