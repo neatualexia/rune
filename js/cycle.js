@@ -170,7 +170,7 @@ function getSpecialDays() {
   const ovulation = new Set();
   const predicted = new Set();
 
-  // Project 3 cycles forward
+  // Project 12 cycles forward
   for (let cycle = 0; cycle < 13; cycle++) {
     const cycleStart = new Date(base);
     cycleStart.setDate(cycleStart.getDate() + cycleLength * cycle);
